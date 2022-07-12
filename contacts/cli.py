@@ -55,10 +55,10 @@ def get_contact_maker() -> contacts.ContactMaker:
  
 @app.command()
 def add(
-  first: str,
-  last: str,
-  mobile: str,
-  email: str
+  first: str = typer.prompt("What's their first name?"),
+  last: str = typer.prompt("What's their last name?"),
+  mobile: str = typer.prompt("What's their mobile number?"),
+  email: str = typer.prompt("What's their email?")
 ) -> None:
   """Add a new contact"""
   contact_maker = get_contact_maker()
@@ -71,8 +71,8 @@ def add(
     raise typer.Exit(1)
   else:
     typer.secho(
-      f"""Contact: "{contact[first]} {contact[last]}" was added."""
-      f"""with mobile #: {mobile} and email: {email}""",
+      f'Contact: "{contact["First"]} {contact["Last"]}" was added ' 
+      f'with mobile #: {contact["Mobile"]} and email: {contact["email"]}',
       fg=typer.colors.GREEN
     )
 
