@@ -125,6 +125,49 @@ def edit_mobile(contact_id: int = typer.Argument(...), mobile: str = typer.Optio
       f"""Mobile number for contact #: {contact_id}, {contact["First"]} {contact["Last"]} changed!""",
       fg=typer.colors.GREEN
     )
+    
+@app.command()
+def remove(
+  contact_id: int = typer.Argument(...),
+  force: bool = typer.Option(
+    False,
+    "--force",
+    "-f",
+    help="Force deletion without confirmation."
+  ),
+) -> None:
+  """Remove a contact using it's contact ID"""
+  contact_maker = get_contact_maker()
+  
+  def _remove():
+    contact, error = contact_maker.remove(contact_id)
+    if error:
+      typer.secho(
+        f'Removing contact #: {contact_id} failed with error: {ERRORS[error]}',
+        fg=typer.colors.RED
+      )
+      raise typer.Exit(1)
+    else:
+      typer.secho(
+        f"""Contact #: {contact_id}, {contact["First"]} {contact["Last"]}, was removed.""",
+        fg=typer.colors.GREEN
+      )
+  if force:
+    _remove()
+  else:
+    contact_list = contact_maker.get_contact_list()
+    try:
+      contact = contact_list[contact_id - 1]
+    except IndexError:
+      typer.secho("Invalid contact ID", fg=typer.colors.RED)
+      raise typer.Exit(1)
+    delete = typer.confirm(
+      f'Delete contact #: {contact_id}, {contact["First"]} {contact["Last"]}?'
+    )
+    if delete:
+      _remove()
+    else:
+      typer.echo("Operation cancelled.")
 
 def _version_callback(value: bool) -> None:
   if value:

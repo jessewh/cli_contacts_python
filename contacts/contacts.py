@@ -54,6 +54,18 @@ class ContactMaker:
     contact["Mobile"] = mobile
     write = self._db_handler.write_contacts(read.contact_list)
     return CurrentContact(contact, write.error)
+  
+  def remove(self, contact_id: int):
+    """Remove a contact from the database."""
+    read = self._db_handler.read_contacts()
+    if read.error:
+      return CurrentContact({}, read.error)
+    try:
+      contact = read.contact_list.pop(contact_id - 1)
+    except IndexError:
+      return CurrentContact({}, ID_ERROR)
+    write = self._db_handler.write_contacts(read.contact_list)
+    return CurrentContact(contact, write.error)
     
     
     
