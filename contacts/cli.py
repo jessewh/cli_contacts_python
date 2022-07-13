@@ -108,6 +108,23 @@ def list_all() -> None:
       fg=typer.colors.BLUE
     )
   typer.secho("-" * (len(headers) + 10) + "\n", fg=typer.colors.BLUE)
+  
+@app.command(name="edit_mobile")
+def edit_mobile(contact_id: int = typer.Argument(...), mobile: str = typer.Option(..., prompt=True)):
+  """Edit the mobile number of a contact"""
+  contact_maker = get_contact_maker()
+  contact, error = contact_maker.edit_mobile(contact_id, mobile)
+  if error:
+    typer.secho(
+      f'Changing mobile number for contact #: "{contact_id}" failed with errors: "{ERRORS[error]}"',
+      fg=typer.colors.RED
+    )
+    raise typer.Exit(1)
+  else:
+    typer.secho(
+      f"""Mobile number for contact #: {contact_id}, {contact["First"]} {contact["Last"]} changed!""",
+      fg=typer.colors.GREEN
+    )
 
 def _version_callback(value: bool) -> None:
   if value:

@@ -42,15 +42,18 @@ class ContactMaker:
     # read = sorted(read, key=lambda contact: contact['First'])
     return read.contact_list
   
-  # def edit_mobile(self, contact_id: int):
-  #   """Change a mobile number"""
-  #   read = self._db_handler.read_contacts()
-  #   if read.error:
-  #     return CurrentContact({}, read.error)
-  #   try:
-  #     contact = read.contact_list[contact_id - 1]
-  #   except IndexError:
-  #     return CurrentContact({}, read.error)
+  def edit_mobile(self, contact_id: int, mobile: str):
+    """Change a mobile number"""
+    read = self._db_handler.read_contacts()
+    if read.error:
+      return CurrentContact({}, read.error)
+    try:
+      contact = read.contact_list[contact_id - 1]
+    except IndexError:
+      return CurrentContact({}, read.error)
+    contact["Mobile"] = mobile
+    write = self._db_handler.write_contacts(read.contact_list)
+    return CurrentContact(contact, write.error)
     
     
     
