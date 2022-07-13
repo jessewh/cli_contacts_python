@@ -110,7 +110,7 @@ def list_all() -> None:
   typer.secho("-" * (len(headers) + 10) + "\n", fg=typer.colors.BLUE)
   
 @app.command(name="edit_mobile")
-def edit_mobile(contact_id: int = typer.Argument(...), mobile: str = typer.Option(..., prompt=True)):
+def edit_mobile(contact_id: int = typer.Argument(...), mobile: str = typer.Option(..., prompt="New mobile number: ")):
   """Edit the mobile number of a contact"""
   contact_maker = get_contact_maker()
   contact, error = contact_maker.edit_mobile(contact_id, mobile)
@@ -168,6 +168,29 @@ def remove(
       _remove()
     else:
       typer.echo("Operation cancelled.")
+      
+@app.command(name="clear")
+def remove_all(
+  force: bool = typer.Option(
+    ...,
+    prompt="Delete all contacts?",
+    help="Force deletion without confirmation."
+  ),
+) -> None:
+  """Remove all contacts."""
+  contact_maker = get_contact_maker()
+  if force:
+    error = contact_maker.remove_all().error
+    if error:
+      typer.secho(
+        f'Removing contacts failed with error: {ERRORS[error]}',
+        fg=typer.colors.RED
+      )
+      raise typer.Exit(1)
+    else:
+      typer.secho("All contacts were removed.", fg=typer.colors.GREEN)
+  else:
+    typer.echo("Operation cancelled.")
 
 def _version_callback(value: bool) -> None:
   if value:

@@ -66,6 +66,11 @@ class ContactMaker:
       return CurrentContact({}, ID_ERROR)
     write = self._db_handler.write_contacts(read.contact_list)
     return CurrentContact(contact, write.error)
+  
+  def remove_all(self) -> CurrentContact:
+    """Remove all contacts from the database."""
+    write = self._db_handler.write_contacts([])
+    return CurrentContact({}, write.error)
     
     
     
